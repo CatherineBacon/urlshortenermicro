@@ -45,8 +45,7 @@ app.get('/:shortUrl(*)', function(req, res) {
         return val == shortUrl;
     } );
     if (longUrl) res.redirect(longUrl);
-    else res.json(sites);
-    //else res.sendStatus(404);
+    else res.sendStatus(404);
 });
 
 var listener = app.listen(port);
