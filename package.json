@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/CatherineBacon/urlshortenermicro/issues"
   },
-  "homepage": "https://github.com/CatherineBacon/urlshortenermicro#readme"
+  "homepage": "https://github.com/CatherineBacon/urlshortenermicro#readme",
+  "dependencies": {
+    "lodash": "^4.16.4"
+  }
 }
