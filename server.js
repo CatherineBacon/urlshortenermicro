@@ -9,6 +9,8 @@ var fs = require('fs');
 
 var _ = require('lodash');
 
+var shortid = require('shortid');
+
 // read in library file - use mongodb
 var sites = {};
 
@@ -16,7 +18,8 @@ var sites = {};
 // function to shorten the url
 // needs updating
 var shortenUrl = function(url) {
-    var newUrl = 'bum';
+    
+    var newUrl = shortid.generate();
     return newUrl;
 };
 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CatherineBacon/urlshortenermicro#readme",
   "dependencies": {
-    "lodash": "^4.16.4"
+    "lodash": "^4.16.4",
+    "shortid": "^2.2.6"
   }
 }
