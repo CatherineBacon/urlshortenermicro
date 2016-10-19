@@ -14,6 +14,51 @@ var shortid = require('shortid');
 // read in library file - use mongodb
 var sites = {};
 
+var mongo = require('mongodb').MongoClient;
+var mongoUrl = 'mongodb://localhost:27017/storedurls';
+var originalSearch = function(oURL) {
+    mongo.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection('urls');
+        collection.find({
+            original: oURL
+        }).toArray(function(err, data) {
+            if (err) return 'not there';
+            return 'already there';
+        });
+        db.close();
+    });
+}
+
+var originalInsert = function(oURL) {
+    mongo.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection('urls');
+        collection.insert({
+            original: oURL,
+            small: shortenUrl(oURL)
+        }, function(err, data){
+            if (err) throw err;
+            return
+        });
+        db.close();
+    });
+}
+
+var shortSearch = function (sURL) {
+    mongo.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection('urls');
+        collection.find({
+            small: sURL
+        }).toArray(function(err, data) {
+            if (err) return 'not there';
+            return data.original;
+        });
+        db.close();
+    });
+}
+
 
 // function to shorten the url
 // needs updating
@@ -28,15 +73,7 @@ var shortenUrl = function(url) {
 app.put('/new/:url(*)', function(req, res) {
     var originalUrl = req.params.url;
     var shortUrl;
-    // check if url is already in dictionary, if so return shortened version
-    if (originalUrl in sites) {
-        shortUrl = sites[originalUrl];
-    } else {
-        // add it to the dictionary, generate the short url and return to user
-        
-        shortUrl = shortenUrl(originalUrl);
-        sites[originalUrl] = shortUrl;
-    }
+    originalInsert(originalUrl);
     res.json( { 'original-url': originalUrl, 'new-url': shortUrl } )
 });
 
