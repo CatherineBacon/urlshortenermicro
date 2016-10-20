@@ -30,30 +30,31 @@ var originalSearch = function(oURL) {
     });
 }
 
-var originalInsert = function(oURL) {
+var originalInsert = function(oURL, cb) {
     mongo.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection('urls');
-        collection.insert({
+        var doc = {
             original: oURL,
             small: shortenUrl(oURL)
-        }, function(err, data){
-            if (err) throw err;
-            return
+        };
+        collection.insert(doc, function(err, data){
+            if (err) return cb(err, null);
+            cb(null, doc);
         });
         db.close();
     });
 }
 
-var shortSearch = function (sURL) {
+var shortSearch = function (sURL, cb) {
     mongo.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection('urls');
         collection.find({
             small: sURL
         }).toArray(function(err, data) {
-            if (err) return 'not there';
-            return data.original;
+            if (err) return cb(err, null);
+            cb(null, data[0].original);
         });
         db.close();
     });
@@ -72,20 +73,20 @@ var shortenUrl = function(url) {
 // get new url suggested
 app.put('/new/:url(*)', function(req, res) {
     var originalUrl = req.params.url;
-    var shortUrl;
-    originalInsert(originalUrl);
-    res.json( { 'original-url': originalUrl, 'new-url': shortUrl } )
+    originalInsert(originalUrl, function(err, result) {
+        if(err) return res.sendStatus(500);
+        res.json(result);
+    });
 });
 
 // if url is accessed send user to actual site
 // get and res.redirect()
 app.get('/:shortUrl(*)', function(req, res) {
     var shortUrl = req.params.shortUrl;
-    var longUrl = _.findKey(sites, function(val) {
-        return val == shortUrl;
-    } );
-    if (longUrl) res.redirect(longUrl);
-    else res.sendStatus(404);
+    shortSearch(shortUrl, function(err, originalUrl){
+        if(originalUrl) res.redirect(originalUrl);
+        else res.sendStatus(404);
+    });
 });
 
 var listener = app.listen(port);
