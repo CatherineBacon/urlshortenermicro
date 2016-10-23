@@ -54,6 +54,8 @@ var shortenUrl = function(url) {
 };
 
 
+app.use('/static', express.static('public'));
+
 // get new url suggested
 app.put('/new/:url(*)', function(req, res) {
     var originalUrl = req.params.url;
@@ -63,10 +65,15 @@ app.put('/new/:url(*)', function(req, res) {
     });
 });
 
+// Return homepage
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'templates/index.html'));
+});
+
 // if url is accessed send user to actual site
 // get and res.redirect()
-app.get('/:shortUrl(*)', function(req, res) {
-    var shortUrl = req.params.shortUrl;
+app.get(/\/(.+)/, function(req, res) {
+    var shortUrl = req.params[0];
     shortSearch(shortUrl, function(err, originalUrl){
         if(originalUrl) res.redirect(originalUrl);
         else res.sendStatus(404);
