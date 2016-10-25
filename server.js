@@ -4,13 +4,13 @@ var app = express();
 var path = require('path');
 
 var port = process.env.PORT || 8080;
+var mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/storedurls';
 
 var _ = require('lodash');
 
 var shortid = require('shortid');
 
 var mongo = require('mongodb').MongoClient;
-var mongoUrl = 'mongodb://localhost:27017/storedurls';
 
 
 
