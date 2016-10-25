@@ -12,11 +12,14 @@ var shortid = require('shortid');
 
 var mongo = require('mongodb').MongoClient;
 
+var validUrl = require('valid-url');
+
+
 
 
 var originalInsert = function(oURL, cb) {
     mongo.connect(mongoUrl, function(err, db) {
-        if (err) throw err;
+        if (err) return cb(err, null);
         var collection = db.collection('urls');
         var doc = {
             original: oURL,
@@ -33,7 +36,7 @@ var originalInsert = function(oURL, cb) {
 
 var shortSearch = function (sURL, cb) {
     mongo.connect(mongoUrl, function(err, db) {
-        if (err) throw err;
+        if (err) return cb(err, null);
         var collection = db.collection('urls');
         collection.find({
             small: sURL
@@ -59,6 +62,7 @@ app.use('/static', express.static('public'));
 // get new url suggested
 app.put('/new/:url(*)', function(req, res) {
     var originalUrl = req.params.url;
+    if (!validUrl.isUri(originalUrl)) return res.status(400).json({error: 'invalid url' });  
     originalInsert(originalUrl, function(err, result) {
         if(err) return res.sendStatus(500);
         res.json(result);
