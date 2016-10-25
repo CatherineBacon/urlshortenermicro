@@ -39,6 +39,7 @@ var shortSearch = function (sURL, cb) {
             small: sURL
         }).toArray(function(err, data) {
             if (err) return cb(err, null);
+            if (!data.length) return cb(null, null);
             cb(null, data[0].original);
         });
         db.close();
@@ -74,8 +75,9 @@ app.get('/', function(req, res) {
 app.get(/\/(.+)/, function(req, res) {
     var shortUrl = req.params[0];
     shortSearch(shortUrl, function(err, originalUrl){
-        if(originalUrl) res.redirect(originalUrl);
-        else res.sendStatus(404);
+        if(err) return res.sendStatus(500);
+        if(!originalUrl) return res.sendStatus(404);
+        res.redirect(originalUrl);
     });
 });
 
