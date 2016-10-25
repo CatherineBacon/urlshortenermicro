@@ -6,6 +6,6 @@ fcc url shortener microserver
 
 [ ] add protocol to shorturl link
 
-[ ] add list of latest urls to homepage?
+[x] add list of latest urls to homepage? no
 
 [x] fix todos!

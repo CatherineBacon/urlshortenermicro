@@ -6,7 +6,7 @@ $(document).ready(function() {
             url: '/new/' + longUrl,
             method: 'PUT'
         }).done(function(data) {
-            var shortUrl = document.location.host + `/`  + data.small;
+            var shortUrl = document.location.protocol + `//` + document.location.host + `/`  + data.small;
             $('.short-result').html(`<a href='${shortUrl}' class='short-url'>${shortUrl}</a> <button class='btn btn-default' data-clipboard-target='.short-url'><span class='glyphicpn glyphicon-copy'></span> copy</button> `);
 
             new Clipboard('.btn');

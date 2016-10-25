@@ -47,7 +47,6 @@ var shortSearch = function (sURL, cb) {
 
 
 // function to shorten the url
-// needs updating
 var shortenUrl = function(url) {    
     var newUrl = shortid.generate();
     return newUrl;
